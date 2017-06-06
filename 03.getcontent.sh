@@ -4,7 +4,6 @@
 
 TOTAL=$(wc -l logs/list.idx | awk '{print $1}')
 
-mkdir -p contents
 if test ! -f logs/list.idx; then
 	echo "There is no logs/list.idx file, run 00.list.sh"
 	exit 1
