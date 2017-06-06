@@ -1,0 +1,27 @@
+REFERER="https://ithub.korean.go.kr/user/total/database/corpusManager.do"
+USERAGENT="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36"
+COOKIE="cookie.txt"
+touch "$COOKIE"
+
+mkdir -p html corpus corpus-utf8 download dictionary
+
+curl_post() {
+	if test -z "$URL"; then
+		echo "DATA is not set"
+		exit 1
+	fi
+	if test -z "$OUTFILE"; then
+		echo "DATA is not set"
+		exit 1
+	fi
+	if test -z "$DATA"; then
+		echo "DATA is not set"
+		exit 1
+	fi
+	if test -f "$OUTFILE"; then
+		echo "Skip download $DESC ($OUTFILE)"
+		return
+	fi
+	echo "Download: $DESC ($OUTFILE)"
+	curl --user-agent "$USERAGENT" --referer $REFERER --cookie $COOKIE --cookie-jar $COOKIE -o $OUTFILE -s "$URL" --data "$DATA"
+}

@@ -1,0 +1,14 @@
+cookie.txt
+word-analysis.txt
+html
+contents
+corpus
+corpus-utf8
+download
+*.log
+list.idx
+list.idx.out
+stamp.*
+dictionary
+logs
+.??*.sw?
