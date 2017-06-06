@@ -24,7 +24,7 @@ logs/word-analysis.txt: stamp.utf8
 	find corpus-utf8 -name '?CT_*.txt' -print0 | xargs -0 ./06.build_dic.py
 
 logs/word-analysis-uniq.txt: logs/word-analysis.txt
-	cat word-analysis.txt | ./07.jamo-conv.py | sort -u > logs/word-analysis-uniq.txt
+	cat logs/word-analysis.txt | ./07.jamo-conv.py | sort -u > logs/word-analysis-uniq.txt
 
 stamp.dic: logs/word-analysis-uniq.txt
 	./08.extract.py logs/word-analysis-uniq.txt
