@@ -12,4 +12,5 @@ do
 	./03.getcontent.sh $(($STEP * $PROCNUM + 1)) $STEP &
 	PROCNUM=$(($PROCNUM+1))
 done
+trap 'kill 0; sleep 1; exit' SIGINT
 wait

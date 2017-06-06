@@ -22,8 +22,11 @@ check_python_module() {
 		echo "Check python module $MODULE: $MODPATH ok"
 	else
 		echo "Check python module: $MODULE not found"
-		echo "Install $MODULE with 'pip install $MODULE'"
-		EXITSTATUS=1
+		echo ""
+		echo "Install $MODULE with 'pip install --target=. $MODULE'"
+		echo "Enter to install"
+		read yn
+		pip install --target=. $MODULE
 	fi
 }
 
@@ -34,5 +37,5 @@ check_executable iconv
 
 check_python_module bs4
 
-
+echo "Done checking running environment"
 exit $EXITSTATUS
