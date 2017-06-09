@@ -21,7 +21,11 @@ def analyze(text):
 	doc = BeautifulSoup( content, 'html.parser' )
 	for e in doc.find_all('s'):
 		for f in e.stripped_strings:
-			outf.write( ('%s\n' % f).encode('utf8') )
+			f = f.encode('utf8').replace("::","")
+			line = line + f
+			if f.find('\t') < 0:
+				continue
+			outf.write( '%s\n' % f )
 			count = count + 1
 
 def extract(path):
