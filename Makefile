@@ -27,8 +27,12 @@ logs/word-analysis-uniq.txt: logs/word-analysis.txt
 	cat logs/word-analysis.txt | ./07.jamo-conv.py | sort -u > logs/word-analysis-uniq.txt
 
 stamp.dic: logs/word-analysis-uniq.txt
+	#build logs/posseq.txt and dictionary/*.dic
 	./08.extract.py logs/word-analysis-uniq.txt
+	for d in dictionary/*.dic; do sort -u $$d > $$d.tmp; mv $$d.tmp $$d; done
+	#build logs/posseq-freq.txt
 	sort logs/posseq.txt | uniq -c | awk '{if( $$1 > 6 ) print $$0}' > logs/posseq-freq.txt
+	#build dictionary/combinations.txt
 	cat logs/posseq-freq.txt | awk '{print $$2}' | sort > dictionary/combinations.txt
 	touch $@
 
