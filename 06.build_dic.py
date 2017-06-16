@@ -20,6 +20,7 @@ def analyze(text):
 			pass
 	doc = BeautifulSoup( content, 'html.parser' )
 	for e in doc.find_all('s'):
+		[t.extract() for t in e('trunc')]
 		for f in e.stripped_strings:
 			f = f.encode('utf8').replace("::","")
 			line = line + f
