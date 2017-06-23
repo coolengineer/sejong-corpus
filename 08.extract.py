@@ -40,7 +40,7 @@ def extract(path):
 				get_fd(pos).write(word + "\n")
 			posseq.append(pos)
 		if len(posseq) > 0:
-			if posseq[0][0] not in('J','E','S','X') and posseq[-1][0] not in ('S'):
+			if posseq[0][0] not in('J','E','S') and posseq[-1][0] not in ('S'):
 				posseq_fd.write( "%s\n" % ('+'.join(posseq)) )
 			#pass
 		#if len(posseq) == 1 and posseq[0] == 'EC':

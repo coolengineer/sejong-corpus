@@ -5,28 +5,28 @@ all:
 
 all-core: stamp.prepare stamp.dic
 
-stamp.prepare:
+stamp.prepare: 00.prepare.sh
 	./00.prepare.sh
 	touch $@
 
-logs/list.idx:
+logs/list.idx: 01.list.sh
 	@./01.list.sh
 
-stamp.download: logs/list.idx
+stamp.download: logs/list.idx 02.schedule.sh
 	@./02.schedule.sh
 	@touch $@
 
-stamp.utf8: stamp.download
+stamp.utf8: stamp.download 05.utf16to8.sh
 	@./05.utf16to8.sh
 	@touch $@
 
-logs/word-analysis.txt: stamp.utf8
+logs/word-analysis.txt: stamp.utf8 06.build_dic.py
 	find corpus-utf8 -name '?CT_*.txt' -print0 | xargs -0 ./06.build_dic.py
 
-logs/word-analysis-uniq.txt: logs/word-analysis.txt
+logs/word-analysis-uniq.txt: logs/word-analysis.txt 07.jamo-conv.py
 	cat logs/word-analysis.txt | ./07.jamo-conv.py | sort -u > logs/word-analysis-uniq.txt
 
-stamp.dic: logs/word-analysis-uniq.txt
+stamp.dic: logs/word-analysis-uniq.txt 08.extract.py
 	#build logs/posseq.txt and dictionary/*.dic
 	./08.extract.py logs/word-analysis-uniq.txt
 	for d in dictionary/*.dic; do sort -u $$d > $$d.tmp; mv $$d.tmp $$d; done
