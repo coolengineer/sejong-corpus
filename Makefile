@@ -29,11 +29,10 @@ logs/word-analysis-uniq.txt: logs/word-analysis.txt 07.jamo-conv.py
 stamp.dic: logs/word-analysis-uniq.txt 08.extract.py
 	#build logs/posseq.txt and dictionary/*.dic
 	./08.extract.py logs/word-analysis-uniq.txt
-	for d in dictionary/*.dic; do sort -u $$d > $$d.tmp; mv $$d.tmp $$d; done
-	#build logs/posseq-freq.txt
-	sort logs/posseq.txt | uniq -c | awk '{if( $$1 > 6 ) print $$0}' > logs/posseq-freq.txt
+	for d in dictionary/*.dic; do sort $$d | uniq -c | awk '{if($$1 > 3) print $$2}' > $$d.tmp; mv $$d.tmp $$d; done
 	#build dictionary/combinations.txt
-	cat logs/posseq-freq.txt | awk '{print $$2}' | sort > dictionary/combinations.txt
+	sort logs/posseq.txt | uniq -c | awk '{if( $$1 > 6 ) print $$0}' > dictionary/combinations.txt
+	@#cat logs/posseq-freq.txt | awk '{print $$2}' | sort > dictionary/combinations.txt
 	touch $@
 
 clean: clean-dic

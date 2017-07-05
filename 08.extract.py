@@ -21,6 +21,7 @@ def extract(path):
 	print( "Loading: %s" % path )
 	f = open(path)
 	count = 0
+	skipcount = 0
 	for line in f:
 		idx = line.find('\t')
 		if idx == -1:
@@ -29,6 +30,8 @@ def extract(path):
 		count = count + 1
 		line = re.sub( r'<[^>]+>', '', line )
 		posseq = []
+		skip = False
+		symcount = 0
 		for w in re.split( '[\s+]+', line ):
 			idx = w.rfind('/')
 			if idx == -1:
@@ -38,14 +41,26 @@ def extract(path):
 			pos = pos.strip()
 			if re.match( r'^[A-Z]+$', pos ):
 				get_fd(pos).write(word + "\n")
+			if pos[0] == 'U':
+				skip = True
+			if pos[0] == 'S':
+				symcount = symcount + 1
 			posseq.append(pos)
-		if len(posseq) > 0:
-			if posseq[0][0] not in('J','E','S') and posseq[-1][0] not in ('S'):
-				posseq_fd.write( "%s\n" % ('+'.join(posseq)) )
-			#pass
-		#if len(posseq) == 1 and posseq[0] == 'EC':
-			#posseq_fd.write( line )
-	print( "Loaded %d words" % count )
+		if symcount > 0:
+			if symcount > 1:
+				skip = True
+			elif posseq[-1][0] == 'S':
+				posseq = posseq[0:-1]
+		if len(posseq) == 0:
+			continue
+		if posseq[0][0] in('J','E'):
+			skip = True
+		if skip:
+			#print( "Skip %s" % ('+'.join(posseq)) )
+			skipcount = skipcount + 1
+		else:
+			posseq_fd.write( "%s\n" % ('+'.join(posseq)) )
+	print( "Loaded %d words, skip %d" % (count,skipcount) )
 	if count > 0:
 		f = open( "logs/morphanals.log", "a" )
 		f.write( path + '\n' )
