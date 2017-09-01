@@ -26,7 +26,14 @@ check_python_module() {
 		echo "Install $MODULE with 'pip install --target=. $MODULE'"
 		echo "Enter to install"
 		read yn
-		pip install --target=. $MODULE
+		pip install $MODULE
+		MODPATH=$(python -c "import $MODULE; print $MODULE.__path__[0]")
+		if test -n "$MODPATH"; then
+			echo "Check python module $MODULE: $MODPATH ok"
+		else
+			echo "Failed to install"
+			exit 1
+		fi
 	fi
 }
 
