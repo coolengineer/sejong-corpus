@@ -2,7 +2,7 @@
 
 cd $(dirname $0)
 mkdir -p corpus-utf8
-find corpus -name '[0-9A-Z]*.txt' | 
+find corpus -name '[0-9A-Z]*[A-Z]*[0-9A-Z]*.txt' | 
     while read doc
     do
         OUTFILE=${doc/corpus/corpus-utf8}
