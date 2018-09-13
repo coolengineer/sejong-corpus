@@ -22,6 +22,11 @@ curl_post() {
 		echo "Skip download $DESC ($OUTFILE)"
 		return
 	fi
-	echo "Download: $DESC ($OUTFILE)"
-	curl -v --user-agent "$USERAGENT" --referer $REFERER --cookie $COOKIE --cookie-jar $COOKIE -o $OUTFILE -s "$URL" --data "$DATA"
+    if test -f "$OUTFILE"; then
+        echo "Download: Skip $DESC ($OUTFILE)"
+    else
+        echo "Download: $DESC ($OUTFILE)"
+        curl -v --user-agent "$USERAGENT" --referer $REFERER --cookie $COOKIE --cookie-jar $COOKIE -o "$OUTFILE.tmp" -s "$URL" --data "$DATA"
+        mv "$OUTFILE.tmp" "$OUTFILE"
+    fi
 }

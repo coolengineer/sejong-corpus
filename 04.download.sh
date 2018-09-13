@@ -59,7 +59,11 @@ if file "$OUTFILE" | grep -q Zip; then
     unzip -o "$OUTFILE" -d corpus 2>/dev/null
     echo "Unzipping $OUTFILE"
 else
-    cp "$OUTFILE" corpus/$FILENAME
-    echo "Copying $OUTFILE to corpus/$FILENAME"
+    if cmp "$OUTFILE" corpus/$FILENAME; then
+        :
+    else
+        cp "$OUTFILE" corpus/$FILENAME
+        echo "Copying $OUTFILE to corpus/$FILENAME"
+    fi
     exit
 fi
