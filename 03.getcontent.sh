@@ -23,8 +23,18 @@ do
 	OUTFILE="html/article-$idx.html"
 	DATA="boardSeq=2&articleSeq=$idx&boardType=CORPUS&roleGb=U&userId=0&deleteValues=&isInsUpd=&pageIndex=1&searchStartDt=&searchEndDt=&searchDataGb=E&searchCondition=&searchKeyword=&pageUnit=10"
 	DESC="$idx ($COUNT/$TOTAL)"
-	curl_post
+	curl_post 2>/dev/null
 	ATTIDX=$(grep attachIdx $OUTFILE | awk -F'"' '{print $8}')
-	./04.download.sh $idx "$ATTIDX"
+	FILESEQ="1"
+	if grep posFileSeq $OUTFILE | grep -q checkbox; then
+		FILESEQ="$FILESEQ,2"
+	fi
+	if grep semFileSeq $OUTFILE | grep -q checkbox; then
+		FILESEQ="$FILESEQ,3"
+	fi
+	if grep synFileSeq $OUTFILE | grep -q checkbox; then
+		FILESEQ="$FILESEQ,4"
+	fi
+	./04.download.sh $idx "$ATTIDX" "$FILESEQ"
 	COUNT=$(( $COUNT + 1 ))
 done

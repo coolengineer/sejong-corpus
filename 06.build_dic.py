@@ -7,6 +7,7 @@ try: os.mkdir( 'logs' )
 except: pass
 
 outf = open('logs/word-analysis.txt', 'w')
+outp = open('logs/pos-analysis.txt', 'w')
 count = 0
 
 def analyze(text):
@@ -20,14 +21,32 @@ def analyze(text):
 			pass
 	doc = BeautifulSoup( content, 'html.parser' )
 	for e in doc.find_all('s'):
-		[t.extract() for t in e('trunc')]
-		for f in e.stripped_strings:
-			f = f.encode('utf8').replace("::","")
-			line = line + f
-			if f.find('\t') < 0:
-				continue
-			outf.write( '%s\n' % f )
-			count = count + 1
+		try:
+			for f in e.stripped_strings:
+				posarr = []
+				f = f.encode('utf8').replace("::","")
+				for line in f.split('\n'):
+					if line.find('\t') < 0:
+						raise Exception("Invalid line: %s" % line)
+					a = line[line.find('\t')+1:]
+					word_posarr = []
+					for b in a.split('+'):
+						if b.find('/') < 0:
+							raise Exception("Invalid line: %s" % line)
+						word_posarr.append( b[b.find('/')+1:] )
+					while len(word_posarr) > 0:
+						if word_posarr[-1][0] != 'S':
+							break
+						word_posarr = word_posarr[0:-1]
+					posarr.append( "+".join(word_posarr) )
+				if len(posarr) > 0:
+					p = " ".join(posarr)
+					outf.write( '%s\n' % f )
+					outp.write( '%s\n' % p )
+					count = count + 1
+		except Exception as e:
+			pass
+		#print "-----------".join(words)
 
 def extract(path):
 	global count

@@ -7,11 +7,11 @@ mkdir -p html corpus corpus-utf8 download dictionary
 
 curl_post() {
 	if test -z "$URL"; then
-		echo "DATA is not set"
+		echo "URL is not set"
 		exit 1
 	fi
 	if test -z "$OUTFILE"; then
-		echo "DATA is not set"
+		echo "OUTFILE is not set"
 		exit 1
 	fi
 	if test -z "$DATA"; then
@@ -22,6 +22,11 @@ curl_post() {
 		echo "Skip download $DESC ($OUTFILE)"
 		return
 	fi
-	echo "Download: $DESC ($OUTFILE)"
-	curl --user-agent "$USERAGENT" --referer $REFERER --cookie $COOKIE --cookie-jar $COOKIE -o $OUTFILE -s "$URL" --data "$DATA"
+    if test -f "$OUTFILE"; then
+        echo "Download: Skip $DESC ($OUTFILE)"
+    else
+        echo "Download: $DESC ($OUTFILE)"
+        curl -v --user-agent "$USERAGENT" --referer $REFERER --cookie $COOKIE --cookie-jar $COOKIE -o "$OUTFILE.tmp" -s "$URL" --data "$DATA"
+        mv "$OUTFILE.tmp" "$OUTFILE"
+    fi
 }
