@@ -19,14 +19,19 @@ fi
 
 BEGIN=$1
 NUMOFLINES=$2
+PROCNUM=$3
 COUNT=$BEGIN
 
-for idx in $(tail -n +$1 logs/list.idx | head -n $NUMOFLINES)
+for SEQ in $(tail -n +$1 logs/list.idx | head -n $NUMOFLINES)
 do
 	URL="https://ithub.korean.go.kr/user/total/database/corpusView.do"
-	OUTFILE="html/article-$idx.html"
-	DATA="boardSeq=2&articleSeq=$idx&boardType=CORPUS&roleGb=U&userId=0&deleteValues=&isInsUpd=&pageIndex=1&searchStartDt=&searchEndDt=&searchDataGb=E&searchCondition=&searchKeyword=&pageUnit=10"
-	DESC="$idx ($COUNT/$TOTAL)"
+	OUTFILE="html/article-$SEQ.html"
+	DATA="boardSeq=2&articleSeq=$SEQ&boardType=CORPUS&roleGb=U&userId=0&deleteValues=&isInsUpd=&pageIndex=1&searchStartDt=&searchEndDt=&searchDataGb=E&searchCondition=&searchKeyword=&pageUnit=10"
+	DESC="$SEQ ($COUNT/$TOTAL)"
+    PREFIX="($SEQ) "
+	if test -n "$PROCNUM"; then
+		PREFIX="[$PROCNUM] $PREFIX"
+	fi
 	curl_post 2>/dev/null
 	ATTIDX=$(grep attachIdx $OUTFILE | awk -F'"' '{print $8}')
 	FILESEQ="1"
@@ -39,6 +44,6 @@ do
 	if grep synFileSeq $OUTFILE | grep -q checkbox; then
 		FILESEQ="$FILESEQ,4"
 	fi
-	./04.download.sh $idx "$ATTIDX" "$FILESEQ"
+	./04.download.sh $SEQ "$ATTIDX" "$FILESEQ" "$PROCNUM"
 	COUNT=$(( $COUNT + 1 ))
 done
