@@ -1,4 +1,5 @@
-.PHONY: prepare all all-core download clean clean-dic
+.PHONY: prepare all all-core clean clean-dic clean-all help
+SHELL=/bin/bash
 M=4
 
 all:
@@ -27,7 +28,8 @@ stamp.convert: stamp.download 05.convert.sh
 
 logs/words.dic: stamp.convert 06.build_dic.py
 	@echo "** Extracting morphemes"
-	@find corpus-utf8 \( -name '?CT_*.txt' -o -name '?T*.txt' \) -print0 | xargs -0 ./06.build_dic.py $@
+	@rm -f logs/extract.log
+	@find corpus-utf8 \( -name '?CT_*.txt' -o -name '?T*.txt' \) -print0 | xargs -0 ./06.build_dic.py $@ 2> logs/extract.log
 
 logs/words-uniq.dic: logs/words.dic 07.jamo-conv.py
 	@echo "** Sort and uniq morphemes"
@@ -49,3 +51,9 @@ clean-dic:
 
 clean-all: clean
 	rm -rf corpus-utf8 corpus dictionary download html logs stamp.* cookie.txt
+
+help:
+	@echo 'make all        : do all jobs'
+	@echo 'make clean-all  : Delete all intermediate files and outputs'
+	@echo 'make clean      : Delete all but downloaded files'
+	@echo 'make clean-dic  : Delete dictionary files only'
