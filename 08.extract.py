@@ -33,10 +33,6 @@ def extract(path):
 	count = 0
 	for line in f:
 		count = count + 1
-		line2 = re.sub( r'<[^>]+>', '', line )
-		if line != line2:
-			print("Invalid format: %s", line)
-			continue
 		posseq = []
 		for w in re.split( '[\s+]+', line ):
 			idx = w.rfind('/')
