@@ -10,6 +10,7 @@ REFERER="https://ithub.korean.go.kr/user/total/database/electronicDicView.do"
 SEQ="$1"
 ATTIDX="$2"
 FILESEQ="$3"
+PROCNUM="$4"
 if test "$FILESEQ" = "1"; then
 	ZIP=N
 	FILESEQVALUES=""
@@ -23,6 +24,10 @@ else
 	OUTFILE="download/$SEQ.zip"
 fi
 DESC="Attachment of $SEQ"
+PREFIX="($SEQ) "
+if test -n "$PROCNUM"; then
+	PREFIX="[$PROCNUM] $PREFIX"
+fi
 mkdir -p download
 mkdir -p corpus
 
@@ -37,19 +42,19 @@ DATA="boardSeq=2&boardGb=T&boardType=CORPUS&articleSeq=$SEQ&roleGb=U&userId=0&fN
 
 SHOULDDOWNLOAD=Y
 if test -f $OUTFILE; then
-    eval $(stat $STATOPTION $OUTFILE)
-    if test $st_size -gt 0; then
-        echo "Skip already downloaded: $OUTFILE"
-        SHOULDDOWNLOAD=
-    else
-        echo "Download again (0 sized file): $OUTFILE"
-    fi
+	eval $(stat $STATOPTION $OUTFILE)
+	if test $st_size -gt 0; then
+		echo "${PREFIX}Skip already downloaded: $OUTFILE"
+		SHOULDDOWNLOAD=
+	else
+		echo "${PREFIX}Download again (0 sized file): $OUTFILE"
+	fi
 fi
 
 if test -n "$SHOULDDOWNLOAD"; then
-    curl_post 2> "$LOGFILE"
+	curl_post 2> "$LOGFILE"
 fi
-echo "Log file: $LOGFILE"
+echo "${PREFIX}Download log file: $LOGFILE"
 
 if test "$(uname -s)" = "Darwin"; then
 	ICONV="iconv -f cp949 -t utf8-mac"
@@ -57,17 +62,23 @@ else
 	ICONV="iconv -f cp949 -t utf8"
 fi
 
-FILENAME=`cat $LOGFILE | grep Content-Disposition | $ICONV | tr -d ';\r' | awk -F= '{printf $NF}'`
-echo "$OUTFILE $FILENAME" >> logs/download.log
-if file "$OUTFILE" | grep -q Zip; then
-    unzip -o "$OUTFILE" -d corpus 2>/dev/null
-    echo "Unzipping $OUTFILE"
+FILENAME=`grep -a Content-Disposition $LOGFILE | $ICONV | tr -d ';\r' | awk -F= '{printf $NF}'`
+echo "${PREFIX}Download file: $OUTFILE, orginal $FILENAME"
+echo "${PREFIX}$OUTFILE $FILENAME" >> logs/download.log
+if test "$ZIP" = "Y"; then
+	if test "$OUTFILE.stamp" -nt "$OUTFILE" 2>/dev/null ; then
+		echo "${PREFIX}Skip unzipping $OUTFILE, already done"
+	else
+		unzip -o "$OUTFILE" -d corpus 2>/dev/null | while read log; do echo "${PREFIX} $log"; done
+		echo "${PREFIX}Unzipping $OUTFILE"
+		touch "$OUTFILE.stamp"
+	fi
 else
-    if cmp "$OUTFILE" corpus/$FILENAME; then
-        :
-    else
-        cp "$OUTFILE" corpus/$FILENAME
-        echo "Copying $OUTFILE to corpus/$FILENAME"
-    fi
-    exit
+	if cmp "$OUTFILE" corpus/$FILENAME 2>/dev/null; then
+		:
+	else
+		cp "$OUTFILE" corpus/$FILENAME
+		echo "${PREFIX}Copying $OUTFILE to corpus/$FILENAME"
+	fi
+	exit
 fi
