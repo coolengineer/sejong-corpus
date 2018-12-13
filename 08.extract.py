@@ -1,4 +1,8 @@
 #!/usr/bin/env python
+#
+# (C) Copyright 2017 Hojin Choi <hojin.choi@gmail.com>
+#
+
 import re
 import sys
 import os
@@ -69,3 +73,4 @@ if __name__ == '__main__':
 	for p in sys.argv[1:]:
 		extract(p)
 
+# vim: ts=4 noexpandtab sw=4 sts=4

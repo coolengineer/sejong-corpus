@@ -1,4 +1,10 @@
 #!/usr/bin/env python
+#
+# (C) Copyright 2017 Hojin Choi <hojin.choi@gmail.com>
+#
+
+from __future__ import print_function, unicode_literals
+from io import open
 from bs4 import BeautifulSoup
 import sys
 import os
@@ -63,3 +69,4 @@ def extract(path):
 if __name__ == '__main__':
     for p in sys.argv[1:]:
         extract(p)
+# vim: ts=4 noexpandtab sw=4 sts=4

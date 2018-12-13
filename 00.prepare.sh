@@ -1,4 +1,8 @@
 #!/bin/bash
+#
+# (C) Copyright 2017 Hojin Choi <hojin.choi@gmail.com>
+#
+
 EXITSTATUS=
 
 mkdir -p corpus-utf8 corpus dictionary download html logs

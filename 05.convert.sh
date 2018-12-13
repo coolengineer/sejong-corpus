@@ -1,4 +1,8 @@
 #!/bin/bash
+#
+# (C) Copyright 2017 Hojin Choi <hojin.choi@gmail.com>
+#
+# vim: ts=4 noexpandtab sw=4 sts=4
 
 cd $(dirname $0)
 mkdir -p corpus-utf8

@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 # -*- encoding: utf8 -*-
+#
+# (C) Copyright 2017 Hojin Choi <hojin.choi@gmail.com>
+#
 
 import sys
 
@@ -33,3 +36,4 @@ while True:
 		else:
 			sys.stdout.write(ch.encode('utf8'))
 		i = i + 1
+# vim: ts=4 noexpandtab sw=4 sts=4
