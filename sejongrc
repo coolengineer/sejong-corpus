@@ -19,13 +19,13 @@ curl_post() {
 		exit 1
 	fi
 	if test -f "$OUTFILE"; then
-		echo "Skip download $DESC ($OUTFILE)"
+		echo "${PREFIX}Skip download $DESC ($OUTFILE)"
 		return
 	fi
     if test -f "$OUTFILE"; then
-        echo "Download: Skip $DESC ($OUTFILE)"
+        echo "${PREFIX}Download: Skip $DESC ($OUTFILE)"
     else
-        echo "Download: $DESC ($OUTFILE)"
+        echo "${PREFIX}Download: $DESC ($OUTFILE)"
         curl -v --user-agent "$USERAGENT" --referer $REFERER --cookie $COOKIE --cookie-jar $COOKIE -o "$OUTFILE.tmp" -s "$URL" --data "$DATA"
         mv "$OUTFILE.tmp" "$OUTFILE"
     fi
