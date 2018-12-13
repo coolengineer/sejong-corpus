@@ -3,6 +3,8 @@
 # (C) Copyright 2017 Hojin Choi <hojin.choi@gmail.com>
 #
 
+from __future__ import print_function, unicode_literals
+from io import open
 import re
 import sys
 import os
@@ -16,26 +18,26 @@ posseq_fd = open('logs/posseq.txt', 'wt')
 try: os.mkdir( 'dictionary' )
 except: pass
 
+dictionaries = []
+
 def get_fd(pos):
 	if not pos in fds:
-		fds[pos] = open( "dictionary/%s.dic" % pos, "wt")
+		filename = 'dictionary/%s.dic' % pos
+		dictionaries.append(filename)
+		fds[pos] = open(filename, "wt")
 	return fds[pos]
 
 def extract(path):
 	print( "Loading: %s" % path )
 	f = open(path)
 	count = 0
-	skipcount = 0
 	for line in f:
-		idx = line.find('\t')
-		if idx == -1:
-			continue
-		line = line[idx+1:]
 		count = count + 1
-		line = re.sub( r'<[^>]+>', '', line )
+		line2 = re.sub( r'<[^>]+>', '', line )
+		if line != line2:
+			print("Invalid format: %s", line)
+			continue
 		posseq = []
-		skip = False
-		symcount = 0
 		for w in re.split( '[\s+]+', line ):
 			idx = w.rfind('/')
 			if idx == -1:
@@ -45,26 +47,9 @@ def extract(path):
 			pos = pos.strip()
 			if re.match( r'^[A-Z]+$', pos ):
 				get_fd(pos).write(word + "\n")
-			if pos[0] == 'U':
-				skip = True
-			if pos[0] == 'S':
-				symcount = symcount + 1
 			posseq.append(pos)
-		if symcount > 0:
-			if symcount > 1:
-				skip = True
-			elif posseq[-1][0] == 'S':
-				posseq = posseq[0:-1]
-		if len(posseq) == 0:
-			continue
-		if posseq[0][0] in('J','E'):
-			skip = True
-		if skip:
-			#print( "Skip %s" % ('+'.join(posseq)) )
-			skipcount = skipcount + 1
-		else:
-			posseq_fd.write( "%s\n" % ('+'.join(posseq)) )
-	print( "Loaded %d words, skip %d" % (count,skipcount) )
+		posseq_fd.write( "%s\n" % ('+'.join(posseq)) )
+	print( "Loaded %d words" % (count,) )
 	if count > 0:
 		f = open( "logs/morphanals.log", "a" )
 		f.write( path + '\n' )
