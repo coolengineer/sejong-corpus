@@ -59,6 +59,7 @@ check_executable curl
 check_executable stat
 check_executable unzip
 check_executable iconv
+check_executable patch
 
 if test -n "$EXITSTATUS"; then
     exit $EXITSTATUS
@@ -83,6 +84,6 @@ fi
 check_python_module bs4
 
 #Delete zero-sized files
-stat -t corpus/* 2>/dev/null | awk '{if ($2 == 0) print $1}' | xargs rm
+stat -t corpus/* 2>/dev/null | awk '{if ($2 == 0) print $1}' | xargs rm -f
 
-echo "Done checking running environment"
+# vim: ts=4 noexpandtab sw=4 sts=4
