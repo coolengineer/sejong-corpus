@@ -3,14 +3,18 @@
 # (C) Copyright 2017 Hojin Choi <hojin.choi@gmail.com>
 #
 
-from __future__ import print_function, unicode_literals
+from __future__ import absolute_import, print_function, unicode_literals
 from io import open
 from bs4 import BeautifulSoup
 import sys
 import os
 import re
 
+lastchunk = ''
+
 def analyze_chunk(outf, text):
+	global lastchunk
+	samples = []
 	count = 0
 	try:
 		for f in text:
@@ -20,6 +24,7 @@ def analyze_chunk(outf, text):
 				if tabidx < 0:
 					raise Exception("Invalid line: [%s]" % line)
 				a = line[tabidx+1:]
+				samples.append(a)
 				for b in re.split(' ?\+ ?', a):
 					b = b.strip()
 					slashidx = b.rfind('/')
@@ -28,8 +33,11 @@ def analyze_chunk(outf, text):
 					outf.write( '%s\n' % b )
 				count += 1
 	except Exception as e:
-		#print(e)
 		pass
+
+	if len(samples):
+		lastchunk = u'\n'.join(samples)
+
 	return count
 
 def analyze_type1(outf, text):
@@ -65,24 +73,31 @@ def extract(outf, path, idx, total):
 	content = open(path, encoding='utf-8').read()
 	doc = BeautifulSoup(content, 'html.parser')
 
-	texts = doc.select('text body p')
+	texts = doc.select('text body p, text p')
 	for text in texts:
 		text = text.get_text()
 		count += analyze_type1(outf, text)
 
 	texts = doc.select('text s')
 	for text in texts:
+		print(text.get_text().encode('utf-8'))
 		text = text.get_text()
 		count += analyze_type2(outf, text)
-	print("(%d/%d) Extract %s: %d morphemes" % (idx, total, path, count) )
+	print( "(%d/%d) Extract %s: %d morphemes" % (idx, total, path, count) )
+	if not sys.stderr.isatty():
+		print( "(%d/%d) Extract %s: %d morphemes" % (idx, total, path, count), file=sys.stderr )
+		print( lastchunk.encode('utf-8'), file=sys.stderr )
 
 if __name__ == '__main__':
 	try:
+		if len(sys.argv) < 3:
+			print("Usage: %s <outfilename> <corpus file> [<corpus file>...]" % sys.argv[0])
+			sys.exit(0)
 		outfile = sys.argv[1]
-		outf = open(outfile, mode='wt', encoding='utf-8')
 		files = sys.argv[2:]
 		total = len(files)
 		count = 0
+		outf = open(outfile, mode='wt', encoding='utf-8')
 		for p in files:
 			count += 1
 			extract(outf, p, count, total)
