@@ -30,3 +30,18 @@ curl_post() {
         mv "$OUTFILE.tmp" "$OUTFILE"
     fi
 }
+
+patch_preexists()
+{
+	INFILE="$1"
+	DIRNAME=${INFILE%/*}
+	BASENAME=${INFILE##*/}
+	PATCHES=${BASENAME%.txt}-*.patch
+	for file in patches/$PATCHES
+	do
+		test -f $file || continue
+		echo "${PREFIX}patch... $file"
+		patch -f -d "$DIRNAME" -p1 < $file
+	done
+}
+
