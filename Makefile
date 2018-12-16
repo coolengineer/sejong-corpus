@@ -1,56 +1,97 @@
-.PHONY: prepare all all-core clean clean-dic clean-all help
+.PHONY: prepare all all-core dic clean clean-dic clean-all help
+.PHONY:	step1 step2 step3 step4 step5 step6
+.PHONY:	clean1 clean2 clean3 clean4 clean5 clean6
+.PHONY: patch diff
+
 SHELL=/bin/bash
 M=4
 
 all:
-	time -p make all-core
+	@time -p make stamps/corpus
+	@echo ""
+	@echo "You can build dictionary, try this."
+	@echo ""
+	@echo "  make dic"
+	@echo ""
 
-all-core: stamp.prepare stamp.dic
+all-core: stamps/dic
 
-stamp.prepare: 00.prepare.sh
-	@echo "** Checking programs"
+step1: logs/list.idx
+step2: stamps/download
+step3: stamps/corpus
+step4: logs/words.dic
+step5: logs/words-uniq.dic
+step6 dic: stamps/dic
+
+stamps/prepare: 00.prepare.sh
+	@echo "** STEP 0. Checking programs"
 	@./00.prepare.sh
 	touch $@
 
-logs/list.idx: 01.list.sh
-	@echo "** Fetching corpus document list"
+logs/list.idx: stamps/prepare 01.list.sh
+	@echo "** STEP 1. Fetching corpus document list"
 	@./01.list.sh
 
-stamp.download: logs/list.idx 02.schedule.sh
-	@echo "** Downloading attachments"
+stamps/download: logs/list.idx 02.schedule.sh
+	@echo "** STEP 2. Downloading attachments"
 	@CONCURRENT=$(M) ./02.schedule.sh
 	@touch $@
 
-stamp.convert: stamp.download 05.convert.sh
-	@echo "** Converting and patching corpus as UTF8"
+CORPUS_FILES := $(wildcard corpus-utf8/*.txt)
+stamps/corpus: stamps/download 05.convert.sh $(CORPUS_FILES)
+	@echo "** STEP 3. Converting and patching corpus as UTF8"
 	@./05.convert.sh
+	@./10.patch.sh
 	@touch $@
 
-logs/words.dic: stamp.convert 06.build_dic.py
-	@echo "** Extracting morphemes"
-	@rm -f logs/extract.log
-	@find corpus-utf8 \( -name '?CT_*.txt' -o -name '?T*.txt' \) -print0 | xargs -0 ./06.build_dic.py $@ 2> logs/extract.log
+MORPHEME_FILES := $(wildcard logs/*.morph.txt)
+logs/words.dic: stamps/corpus 06.build_dic.py $(MORPHEME_FILES)
+	@echo "** STEP 4. Extracting morphemes"
+	@./06.extract.sh $@
 
 logs/words-uniq.dic: logs/words.dic 07.jamo-conv.py
 	@echo "** Sort and uniq morphemes"
-	@echo "JAMO normalizing (JONGSUNG to CHOSUNG)..."
-	@time -p ./07.jamo-conv.py logs/words.dic logs/words.tmp
-	@echo "Sorting ..."
-	@time -p sort -u logs/words.tmp > $@
+	@time -p sort -u logs/words.dic > $@
 
-stamp.dic: logs/words-uniq.dic 08.extract.py
+stamps/dic: logs/words-uniq.dic 08.extract.py
 	@echo "** Building dictionaries..."
+	@rm -rf dictionary
+	@mkdir dictionary
 	@./08.extract.py logs/words-uniq.dic
+	@echo "Dictionary extracted: ./dictionary"
 	touch $@
 
+stamps/utf8.orig:
+	@DESTDIR=corpus-utf8.orig ./05.convert.sh
+	@touch $@
+
+patch:
+	@./10.patch.sh
+
+diff: stamps/utf8.orig
+	@./20.diff.sh
+
 clean: clean-dic
-	rm -f list.idx logs/*.txt stamp.convert
+	rm -f list.idx stamps/corpus
 
 clean-dic:
-	rm -rf dictionary stamp.dic
+	rm -rf dictionary stamps/dic logs/*.dic
 
 clean-all: clean
-	rm -rf corpus-utf8 corpus dictionary download html logs stamp.* cookie.txt
+	rm -rf corpus-utf8 corpus dictionary download html logs stamps/* cookie.txt
+
+clean1:
+	rm -f logs/list.idx
+clean2:
+	rm -f stamps/download
+clean3:
+	rm -f stamps/corpus
+clean4:
+	rm -f logs/words.dic
+clean5:
+	rm -f logs/words-uniq.dic
+clean6:
+	rm -f stamps/dic
 
 help:
 	@echo 'make all        : do all jobs'
