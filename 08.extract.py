@@ -13,7 +13,6 @@ try: os.mkdir('logs')
 except: pass
 
 fds = {}
-posseq_fd = open('logs/posseq.txt', 'wt')
 
 try: os.mkdir( 'dictionary' )
 except: pass
@@ -33,7 +32,6 @@ def extract(path):
 	count = 0
 	for line in f:
 		count = count + 1
-		posseq = []
 		for w in re.split( '[\s+]+', line ):
 			idx = w.rfind('/')
 			if idx == -1:
@@ -43,12 +41,7 @@ def extract(path):
 			pos = pos.strip()
 			if re.match( r'^[A-Z]+$', pos ):
 				get_fd(pos).write(word + "\n")
-			posseq.append(pos)
-		posseq_fd.write( "%s\n" % ('+'.join(posseq)) )
-	print( "Loaded %d words" % (count,) )
-	if count > 0:
-		f = open( "logs/morphanals.log", "a" )
-		f.write( path + '\n' )
+	print( "Word count: %d" % (count,) )
 	
 if __name__ == '__main__':
 	for p in sys.argv[1:]:
