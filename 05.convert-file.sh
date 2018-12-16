@@ -9,6 +9,9 @@ cd $(dirname $0)
 ## UTF8 Converting
 INFILE="$1"
 OUTFILE="$2"
+LOGFILE=${INFILE%.txt}.log
+
+exec 2> "$LOGFILE"
 
 echo "Convert: $INFILE > $OUTFILE"
 cat $INFILE | iconv -f utf-16 -t utf8 | tr -d '\r' > $OUTFILE.tmp
@@ -17,3 +20,6 @@ cat $INFILE | iconv -f utf-16 -t utf8 | tr -d '\r' > $OUTFILE.tmp
 cat $OUTFILE.tmp | ./05.convert-xml-tag.py > $OUTFILE.tmp2 2>> logs/unknown-xml-tags.log
 mv $OUTFILE.tmp2 $OUTFILE
 
+if test -z "$(head -2 $LOGFILE)"; then
+	rm -f $OUTFILE.tmp "$LOGFILE"
+fi
