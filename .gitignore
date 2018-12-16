@@ -4,6 +4,7 @@ html
 contents
 corpus
 corpus-utf8
+corpus-utf8.*
 download
 *.log
 list.idx
@@ -14,3 +15,5 @@ logs
 .??*.sw?
 beautifulsoup4*
 bs4*
+tmp
+
