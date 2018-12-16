@@ -37,6 +37,12 @@ def analyze_chunk(outf, text):
 
 	if len(samples):
 		lastchunk = u'\n'.join(samples)
+		#In python3, type(u'') is str
+		#In python2, type(u'') is unicode
+		#print() with sys.stderr function requires 'bytes' in python2, so encode() needed.
+		#print() in python3, keep it not touched
+		if not isinstance(lastchunk, str):
+			lastchunk = lastchunk.encode('utf-8')
 
 	return count
 
@@ -80,21 +86,21 @@ def extract(outf, path, idx, total):
 
 	texts = doc.select('text s')
 	for text in texts:
-		print(text.get_text().encode('utf-8'))
 		text = text.get_text()
 		count += analyze_type2(outf, text)
 	print( "(%d/%d) Extract %s: %d morphemes" % (idx, total, path, count) )
 	if not sys.stderr.isatty():
-		print( "(%d/%d) Extract %s: %d morphemes" % (idx, total, path, count), file=sys.stderr )
-		print( lastchunk.encode('utf-8'), file=sys.stderr )
+		print("(%d/%d) Extract %s: %d morphemes" % (idx, total, path, count), file=sys.stderr)
+		print("Last chunk", file=sys.stderr)
+		print(lastchunk, file=sys.stderr)
 
 if __name__ == '__main__':
 	try:
-		if len(sys.argv) < 3:
-			print("Usage: %s <outfilename> <corpus file> [<corpus file>...]" % sys.argv[0])
+		if len(sys.argv) != 3:
+			print("Usage: %s <corpus file> [<corpus file>...] <morpheme extract file>" % sys.argv[0])
 			sys.exit(0)
-		outfile = sys.argv[1]
-		files = sys.argv[2:]
+		files = sys.argv[1:-1]
+		outfile = sys.argv[-1]
 		total = len(files)
 		count = 0
 		outf = open(outfile, mode='wt', encoding='utf-8')
