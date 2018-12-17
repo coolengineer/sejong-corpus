@@ -13,7 +13,7 @@ if test ! -f logs/list.idx; then
 	exit 1
 fi
 if test -z "$1" -o -z "$2"; then
-	echo "Usage: ./03.getcontent.sh <begin-line number of list.idx> <number of lines>"
+	echo "Usage: ./21.getcontent.sh <begin-line number of list.idx> <number of lines>"
 	exit 1
 fi
 
@@ -44,6 +44,6 @@ do
 	if grep synFileSeq $OUTFILE | grep -q checkbox; then
 		FILESEQ="$FILESEQ,4"
 	fi
-	./04.download.sh $SEQ "$ATTIDX" "$FILESEQ" "$PROCNUM"
+	./22.download.sh $SEQ "$ATTIDX" "$FILESEQ" "$PROCNUM"
 	COUNT=$(( $COUNT + 1 ))
 done

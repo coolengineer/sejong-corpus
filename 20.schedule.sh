@@ -17,7 +17,7 @@ do
 	if test $CONCURRENT -gt 1; then
 		_PROCNUM=$(printf "%03d" $PROCNUM)
 	fi
-	./03.getcontent.sh $(($STEP * $PROCNUM + 1)) $STEP $_PROCNUM &
+	./21.getcontent.sh $(($STEP * $PROCNUM + 1)) $STEP $_PROCNUM &
 	PROCNUM=$(($PROCNUM+1))
 done
 trap 'kill 0; sleep 1; exit' SIGINT

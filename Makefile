@@ -28,48 +28,51 @@ stamps/prepare: 00.prepare.sh
 	@./00.prepare.sh
 	touch $@
 
-logs/list.idx: stamps/prepare 01.list.sh
+logs/list.idx: stamps/prepare 10.list.sh
 	@echo "** STEP 1. Fetching corpus document list"
-	@./01.list.sh
+	@./10.list.sh
 
-stamps/download: logs/list.idx 02.schedule.sh
+stamps/download: logs/list.idx 20.schedule.sh
 	@echo "** STEP 2. Downloading attachments"
-	@CONCURRENT=$(M) ./02.schedule.sh
+	@CONCURRENT=$(M) ./20.schedule.sh
 	@touch $@
 
 CORPUS_FILES := $(wildcard corpus-utf8/*.txt)
-stamps/corpus: stamps/download 05.convert.sh $(CORPUS_FILES)
+stamps/corpus: stamps/download 30.convert.sh $(CORPUS_FILES)
 	@echo "** STEP 3. Converting and patching corpus as UTF8"
-	@./05.convert.sh
-	@./10.patch.sh
+	@./30.convert.sh
+	@./31.patch.sh
 	@touch $@
 
 MORPHEME_FILES := $(wildcard logs/*.morph.txt)
-logs/words.dic: stamps/corpus 06.build_dic.py $(MORPHEME_FILES)
+logs/words.dic: stamps/corpus 60.build_dic.py $(MORPHEME_FILES)
 	@echo "** STEP 4. Extracting morphemes"
-	@./06.extract.sh $@
+	@./40.extract.sh $@
 
-logs/words-uniq.dic: logs/words.dic 07.jamo-conv.py
-	@echo "** Sort and uniq morphemes"
+logs/words-uniq.dic: logs/words.dic
+	@echo "** STEP 5. Sort and uniq morphemes"
 	@time -p sort -u logs/words.dic > $@
 
-stamps/dic: logs/words-uniq.dic 08.extract.py
-	@echo "** Building dictionaries..."
+stamps/dic: logs/words-uniq.dic ./60.build_dic.py
+	@echo "** STEP 6. Building dictionaries..."
 	@rm -rf dictionary
 	@mkdir dictionary
-	@./08.extract.py logs/words-uniq.dic
+	@./60.build_dic.py logs/words-uniq.dic
 	@echo "Dictionary extracted: ./dictionary"
-	touch $@
-
-stamps/utf8.orig:
-	@DESTDIR=corpus-utf8.orig ./05.convert.sh
 	@touch $@
 
-patch:
-	@./10.patch.sh
+stamps/utf8.orig:
+	@echo "** STEP X1. Fetching original corpus (in corpus-utf8.orig)..."
+	@DESTDIR=corpus-utf8.orig ./30.convert.sh
+	@touch $@
 
 diff: stamps/utf8.orig
-	@./20.diff.sh
+	@echo "** STEP X2. Make diff file between corpus-utf8.orig and corpus-utf8"
+	@./90.diff.sh
+
+patch:
+	@echo "** STEP Y. Test patch"
+	@./31.patch.sh
 
 clean: clean-dic
 	rm -f list.idx stamps/corpus

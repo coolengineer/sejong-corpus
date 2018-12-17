@@ -106,6 +106,9 @@ if __name__ == '__main__':
 		outf = open(outfile, mode='wt', encoding='utf-8')
 		for p in files:
 			count += 1
+			if 'TOTAL' in os.environ and 'COUNT' in os.environ:
+				count = os.environ['COUNT']
+				total = os.environ['TOTAL']
 			extract(outf, p, count, total)
 	except KeyboardInterrupt:
 		print("\nOk, take a rest!")
