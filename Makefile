@@ -41,7 +41,7 @@ CORPUS_FILES := $(wildcard corpus-utf8/*.txt)
 stamps/corpus: stamps/download 30.convert.sh $(CORPUS_FILES)
 	@echo "** STEP 3. Converting and patching corpus as UTF8"
 	@./30.convert.sh
-	@./31.patch.sh
+	@./33.patch.sh
 	@touch $@
 
 MORPHEME_FILES := $(wildcard logs/*.morph.txt)

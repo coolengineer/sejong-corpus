@@ -17,7 +17,7 @@ echo "Convert: $INFILE > $OUTFILE"
 cat $INFILE | iconv -f utf-16 -t utf8 | tr -d '\r' > $OUTFILE.tmp
 
 ## non-XML tag escaping
-cat $OUTFILE.tmp | ./05.convert-xml-tag.py > $OUTFILE.tmp2 2>> logs/unknown-xml-tags.log
+cat $OUTFILE.tmp | ./32.convert-xml-tag.py > $OUTFILE.tmp2 2>> logs/unknown-xml-tags.log
 mv $OUTFILE.tmp2 $OUTFILE
 
 if test -z "$(head -2 $LOGFILE)"; then

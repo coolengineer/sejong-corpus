@@ -22,7 +22,7 @@ find corpus -name '[0-9A-Z]*[A-Z]*[0-9A-Z]*.txt' |
 			fi
 		fi
 
-		./05.convert-file.sh $INFILE $OUTFILE
+		./31.convert-file.sh $INFILE $OUTFILE
 	done
 if test -f logs/unknown-xml-tags.log; then
 	sort logs/unknown-xml-tags.log | uniq -c | sort -nr > logs/unknown-xml-tags2.log
