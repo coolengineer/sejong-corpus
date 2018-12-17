@@ -5,7 +5,7 @@
 
 EXITSTATUS=
 
-mkdir -p corpus-utf8 corpus dictionary download html logs
+mkdir -p corpus-utf8 corpus dictionary download html logs stamps
 
 check_executable() {
 	EXE=$1
