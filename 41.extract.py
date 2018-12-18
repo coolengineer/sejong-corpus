@@ -74,10 +74,12 @@ def analyze_type2(outf, text):
 	count += analyze_chunk(outf, content)
 	return count
 
-def extract(outf, path, idx, total):
-	count = 0
-	content = open(path, encoding='utf-8').read()
+def extract(outfile, path, idx, total):
+	outf = open(outfile, mode='at', encoding='utf-8')
+	content = open(path, mode='rt', encoding='utf-8').read()
 	doc = BeautifulSoup(content, 'html.parser')
+
+	count = 0
 
 	texts = doc.select('text body p, text p')
 	for text in texts:
@@ -88,9 +90,9 @@ def extract(outf, path, idx, total):
 	for text in texts:
 		text = text.get_text()
 		count += analyze_type2(outf, text)
-	print( "(%d/%d) Extract %s: %d morphemes" % (idx, total, path, count) )
+	print( "(%d/%d) Extract %s >> %s %d morphemes" % (idx, total, path, outfile, count) )
 	if not sys.stderr.isatty():
-		print("(%d/%d) Extract %s: %d morphemes" % (idx, total, path, count), file=sys.stderr)
+		print("(%d/%d) Extract %s >> %s %d morphemes" % (idx, total, path, outfile, count), file=sys.stderr)
 		print("Last chunk", file=sys.stderr)
 		print(lastchunk, file=sys.stderr)
 
@@ -101,15 +103,19 @@ if __name__ == '__main__':
 			sys.exit(0)
 		files = sys.argv[1:-1]
 		outfile = sys.argv[-1]
+
+		#Truncate
+		outf = open(outfile, mode='w')
+		outf and outf.close()
+
 		total = len(files)
 		count = 0
-		outf = open(outfile, mode='wt', encoding='utf-8')
 		for p in files:
 			count += 1
 			if 'TOTAL' in os.environ and 'COUNT' in os.environ:
-				count = os.environ['COUNT']
-				total = os.environ['TOTAL']
-			extract(outf, p, count, total)
+				count = int(os.environ['COUNT'] or 0)
+				total = int(os.environ['TOTAL'] or 0)
+			extract(outfile, p, count, total)
 	except KeyboardInterrupt:
 		print("\nOk, take a rest!")
 	except:
