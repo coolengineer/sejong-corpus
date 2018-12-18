@@ -22,7 +22,8 @@
 $ make
 ```
 
-게시판의 게시물 목록을 추출하고, 각 게시물에서 첨부파일을 받는 과정입니다. 총 4 STEP
+게시판의 게시물 목록을 추출하고, 각 게시물에서 첨부파일을 받는 과정입니다. 총 네 단계를 자동진행
+합니다.
 
 #### STEP 0 ####
 이 단계에서는 필요한 툴의 존재를 확인합니다. 없는 경우 적당하게 설치를 유도합니다. 만약 본
@@ -44,7 +45,8 @@ $ make dic
 ```
 
 말뭉치가 준비되었으면 (corpus-utf8 디렉토리에) 해당 말뭉치로부터 형태소 분석 결과만을 추출하고
-추출된 형태소 및 태깅된 품사로부터 역으로 사전을 구축하는 단계입니다. (dictionary 디렉토리에)
+추출된 형태소 및 태깅된 품사로부터 역으로 dictionary 디렉토리에 사전을 구축하는 단계입니다.
+자동으로 세 단계를 진행합니다.
 
 #### STEP 4 ####
 이 단계는 각 파일 중 형태소 분석 결과를 포함한 파일에서 유형을 따라 파일을 형태소 및 품사 부분을
@@ -57,7 +59,7 @@ $ make dic
 유일한 표제어 집합을 만든다음 각 품사별로 쪼개어 품사(POS)별로 나누어 저장합니다
 
 ### 수정 ###
-corpus/*.txt 파일은 UTF18 원본이므로 수정하지 않습니다. 말뭉치에 문제가 있는 경우 corpus-utf8/*.txt
+corpus/{ * }.txt 파일은 UTF18 원본이므로 수정하지 않습니다. 말뭉치에 문제가 있는 경우 corpus-utf8/{ * }.txt
 파일을 직접 수정합니다.
 
 ```
@@ -68,10 +70,10 @@ make diff
 파일이 있는 corpus-utf8 디렉토리의 파일들과 비교하여 바뀐 파일들의 차이만을 patches 디렉토리에
 저장합니다. 
 
-만약 patches/*.patch 파일을 수동으로 corpus-utf8 파일들에 patch 하고 싶다면
+만약 patches/{ * }.patch 파일을 수동으로 corpus-utf8 파일들에 patch 하고 싶다면
 
 ```
-$ cat patches/* | patch -N -d corpus-utf8 -p1
+$ cat patches/{ * } | patch -N -d corpus-utf8 -p1
 ```
 
 위와 같이 합니다. -N 옵션이 있으므로 이미 적용된 패치는 무시하므로 여러번 실행하여도 같은 결과를
@@ -79,11 +81,11 @@ $ cat patches/* | patch -N -d corpus-utf8 -p1
 
 ### 산출물 ###
 * logs/list.idx : 국립국어원 언어정보나눔터 게시판 글 번호
-* html/*:게시판 원문
-* download/*:게시판 첨부파일
-* corpus/*:첨부파일에서 말뭉치 추출
-* corpus-utf8/*:말뭉치를 UTF8으로 변환
-* corpus-utf8.orig/*:말뭉치를 UTF8으로 변환한 원본 (make diff 중 생김)
+* html/* :게시판 원문
+* download/* :게시판 첨부파일
+* corpus/* :첨부파일에서 말뭉치 추출
+* corpus-utf8/* :말뭉치를 UTF8으로 변환
+* corpus-utf8.orig/* :말뭉치를 UTF8으로 변환한 원본 (make diff 중 생김)
 * logs/download.log: 첨부파일 다운로드 기록
 * logs/words.dic: 단어/품사분석 추출 원본
 * logs/words-uniq.dic: 단어/품사의 중복 제거
