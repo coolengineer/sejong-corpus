@@ -74,17 +74,17 @@ diff: stamps/utf8.orig
 	@./90.diff.sh
 
 patch:
-	@echo "** STEP Y. Test patch"
+	@echo "** PATCH. Test patch"
 	@./33.patch.sh
 
 clean: clean-dic
-	rm -f list.idx stamps/corpus
+	rm -f logs/list.idx stamps/corpus
 
 clean-dic:
 	rm -rf dictionary stamps/dic logs/*.dic
 
 clean-all: clean
-	rm -rf corpus-utf8 corpus dictionary download html logs stamps/* cookie.txt
+	rm -rf corpus-utf8 corpus dictionary download html logs stamps/*
 
 clean1:
 	rm -f logs/list.idx

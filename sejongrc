@@ -1,6 +1,6 @@
 REFERER="https://ithub.korean.go.kr/user/total/database/corpusManager.do"
 USERAGENT="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36"
-COOKIE="cookie.txt"
+COOKIE="html/cookie.txt"
 touch "$COOKIE"
 
 mkdir -p html corpus corpus-utf8 download dictionary
@@ -41,7 +41,7 @@ patch_preexists()
 	do
 		test -f $file || continue
 		echo "${PREFIX}patch... $file"
-		patch -f -d "$DIRNAME" -p1 < $file
+		patch -N -d "$DIRNAME" -p1 < $file
 	done
 }
 
