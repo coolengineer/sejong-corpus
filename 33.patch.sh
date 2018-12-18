@@ -17,9 +17,12 @@ find corpus -name '[0-9A-Z]*[A-Z]*[0-9A-Z]*.txt' |
 		INFILE=${FILE/corpus/$DESTDIR}
 		STAMPFILE=${FILE/corpus\//stamps/patch-}
 		if test "$INFILE" -ot "$STAMPFILE"; then
-			echo "Skip patch $INFILE"
+			echo -n -e "Skip patch $INFILE\r"
 			continue
 		fi
 		PREFIX="" patch_preexists "$INFILE"
 		touch "$STAMPFILE"
 	done
+
+echo ""
+echo "Done..."

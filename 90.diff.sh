@@ -52,4 +52,6 @@ echo "$count files scanned.."
 if test "$newcount" -gt 0; then
 	echo "Add newly created patch files to git, please"
 	echo "git add patches"
+else
+	echo "No new diff found"
 fi

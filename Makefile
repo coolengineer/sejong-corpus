@@ -51,28 +51,31 @@ logs/words.dic: stamps/corpus 60.build_dic.py $(MORPHEME_FILES)
 
 logs/words-uniq.dic: logs/words.dic
 	@echo "** STEP 5. Sort and uniq morphemes"
+	@echo Sorting... from logs/words.dic to $@
 	@time -p sort -u logs/words.dic > $@
+	@echo "Done..."
 
 stamps/dic: logs/words-uniq.dic ./60.build_dic.py
 	@echo "** STEP 6. Building dictionaries..."
 	@rm -rf dictionary
 	@mkdir dictionary
+	@echo Build from logs/words-uniq.dic
 	@./60.build_dic.py logs/words-uniq.dic
 	@echo "Dictionary extracted: ./dictionary"
 	@touch $@
 
 stamps/utf8.orig:
-	@echo "** STEP X1. Fetching original corpus (in corpus-utf8.orig)..."
+	@echo "** DIFF prepare. Fetching original corpus (in corpus-utf8.orig)..."
 	@DESTDIR=corpus-utf8.orig ./30.convert.sh
 	@touch $@
 
 diff: stamps/utf8.orig
-	@echo "** STEP X2. Make diff file between corpus-utf8.orig and corpus-utf8"
+	@echo "** DIFF. Make diff file between corpus-utf8.orig and corpus-utf8"
 	@./90.diff.sh
 
 patch:
 	@echo "** STEP Y. Test patch"
-	@./31.patch.sh
+	@./33.patch.sh
 
 clean: clean-dic
 	rm -f list.idx stamps/corpus
