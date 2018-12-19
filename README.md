@@ -63,7 +63,7 @@ $ make dic
 유일한 표제어 집합을 만든다음 각 품사별로 쪼개어 품사(POS)별로 나누어 저장합니다
 
 ### 수정 ###
-corpus/{ * }.txt 파일은 UTF18 원본이므로 수정하지 않습니다. 말뭉치에 문제가 있는 경우 corpus-utf8/{ * }.txt
+corpus/\*.txt 파일은 UTF18 원본이므로 수정하지 않습니다. 말뭉치에 문제가 있는 경우 corpus-utf8/\*.txt
 파일을 직접 수정합니다.
 
 ```
@@ -74,7 +74,7 @@ make diff
 파일이 있는 corpus-utf8 디렉토리의 파일들과 비교하여 바뀐 파일들의 차이만을 patches 디렉토리에
 저장합니다. 
 
-만약 patches/{ * }.patch 파일을 수동으로 corpus-utf8 파일들에 patch 하고 싶다면
+만약 patches/*.patch 파일을 수동으로 corpus-utf8 파일들에 patch 하고 싶다면
 
 ```
 $ cat patches/* | patch -N -d corpus-utf8 -p1
@@ -153,6 +153,6 @@ make M=10
 * 하나로 합쳐있는 형태소 분석 결과 뭉치에서 각 형태소별로 dictionary/(POS).dic 파일로 분할정리합니다.
 
 ## 90.diff.sh
-* 원본 파일과(corpus-utf8.orig/ *.txt) 작업자가 보정한(corpus-utf8/ *.txt) 파일을 비교하여
-patches/ *.patch 파일을 만듭니다.
+* 원본 파일과(corpus-utf8.orig/\*.txt) 작업자가 보정한(corpus-utf8/\*.txt) 파일을 비교하여
+patches/\*.patch 파일을 만듭니다.
 
