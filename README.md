@@ -77,7 +77,7 @@ make diff
 만약 patches/{ * }.patch 파일을 수동으로 corpus-utf8 파일들에 patch 하고 싶다면
 
 ```
-$ cat patches/{ * } | patch -N -d corpus-utf8 -p1
+$ cat patches/* | patch -N -d corpus-utf8 -p1
 ```
 
 위와 같이 합니다. -N 옵션이 있으므로 이미 적용된 패치는 무시하므로 여러번 실행하여도 같은 결과를
@@ -153,6 +153,6 @@ make M=10
 * 하나로 합쳐있는 형태소 분석 결과 뭉치에서 각 형태소별로 dictionary/(POS).dic 파일로 분할정리합니다.
 
 ## 90.diff.sh
-* 원본 파일과(corpus-utf8.orig/*.txt) 작업자가 보정한(corpus-utf8/*.txt) 파일을 비교하여
-patches/*.patch 파일을 만듭니다.
+* 원본 파일과(corpus-utf8.orig/ *.txt) 작업자가 보정한(corpus-utf8/ *.txt) 파일을 비교하여
+patches/ *.patch 파일을 만듭니다.
 
