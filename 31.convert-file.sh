@@ -14,7 +14,7 @@ LOGFILE=${INFILE%.txt}.log
 exec 2> "$LOGFILE"
 
 echo "Convert: $INFILE > $OUTFILE"
-cat $INFILE | iconv -f utf-16 -t utf8 | tr -d '\r' > $OUTFILE.tmp
+cat $INFILE | iconv -f utf-16 -t utf-8 | tr -d '\r' > $OUTFILE.tmp
 
 ## non-XML tag escaping
 cat $OUTFILE.tmp | ./32.convert-xml-tag.py > $OUTFILE.tmp2 2>> logs/unknown-xml-tags.log

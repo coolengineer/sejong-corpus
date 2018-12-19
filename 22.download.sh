@@ -59,7 +59,7 @@ echo "${PREFIX}Download log file: $LOGFILE"
 if test "$(uname -s)" = "Darwin"; then
 	ICONV="iconv -f cp949 -t utf8-mac"
 else
-	ICONV="iconv -f cp949 -t utf8"
+	ICONV="iconv -f cp949 -t utf-8"
 fi
 
 FILENAME=`grep -a Content-Disposition $LOGFILE | $ICONV | tr -d ';\r' | awk -F= '{printf $NF}'`
