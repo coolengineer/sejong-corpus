@@ -33,6 +33,13 @@ do
 		PREFIX="[$PROCNUM] $PREFIX"
 	fi
 	curl_post 2>/dev/null
+	size=$(stat -c%s "$OUTFILE")
+	while [[ "$size" -lt 1000 ]]
+	do
+		rm "$OUTFILE"
+		curl_post 2>/dev/null
+		size=$(stat -c%s "$OUTFILE")
+	done
 	ATTIDX=$(grep attachIdx $OUTFILE | awk -F'"' '{print $8}')
 	FILESEQ="1"
 	if grep posFileSeq $OUTFILE | grep -q checkbox; then
