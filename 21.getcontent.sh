@@ -21,7 +21,8 @@ BEGIN=$1
 NUMOFLINES=$2
 PROCNUM=$3
 COUNT=$BEGIN
-
+TRYCOUNT=${TRYCOUNT-5}
+LOGFILE=
 for SEQ in $(tail -n +$1 logs/list.idx | head -n $NUMOFLINES)
 do
 	URL="https://ithub.korean.go.kr/user/total/database/corpusView.do"
@@ -32,7 +33,20 @@ do
 	if test -n "$PROCNUM"; then
 		PREFIX="[$PROCNUM] $PREFIX"
 	fi
-	curl_post 2>/dev/null
+	TCOUNT="$TRYCOUNT"
+	while test $TCOUNT -gt 0
+	do
+		curl_post
+		if grep -q posFileSeq $OUTFILE 2>/dev/null; then
+			break
+		fi
+		rm -f "$OUTFILE"
+		let "TCOUNT--"
+	done
+	if test "$TCOUNT" -eq 0; then
+		echo "Try out error to download $OUTFILE from $URL"
+		exit 1
+	fi
 	ATTIDX=$(grep attachIdx $OUTFILE | awk -F'"' '{print $8}')
 	FILESEQ="1"
 	if grep posFileSeq $OUTFILE | grep -q checkbox; then
@@ -44,6 +58,6 @@ do
 	if grep synFileSeq $OUTFILE | grep -q checkbox; then
 		FILESEQ="$FILESEQ,4"
 	fi
-	./22.download.sh $SEQ "$ATTIDX" "$FILESEQ" "$PROCNUM"
+	./22.download.sh $SEQ "$ATTIDX" "$FILESEQ" "$PROCNUM" || exit
 	COUNT=$(( $COUNT + 1 ))
-done
+done || exit 1
