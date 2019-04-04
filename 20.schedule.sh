@@ -12,13 +12,20 @@ CONCURRENT=${CONCURRENT-20}
 STEP=$(( ($TOTAL-1)/$CONCURRENT + 1))
 PROCNUM=0
 _PROCNUM=
+PIDS=""
+echo "Download with $CONCURRENT processes"
 while test $PROCNUM -lt $CONCURRENT
 do
 	if test $CONCURRENT -gt 1; then
 		_PROCNUM=$(printf "%03d" $PROCNUM)
 	fi
 	./21.getcontent.sh $(($STEP * $PROCNUM + 1)) $STEP $_PROCNUM &
+	PIDS="$PIDS $!"
 	PROCNUM=$(($PROCNUM+1))
 done
 trap 'kill 0; sleep 1; exit' SIGINT
-wait
+wait -n $PIDS || {
+	kill $PIDS
+	sleep 1
+   	exit 1
+}
