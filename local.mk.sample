@@ -1,0 +1,7 @@
+# Copy this file to local.mk and customize it!
+
+#Concurrent download processes
+M=4
+
+#Maximum try count to download a file
+TRYCOUNT=3
