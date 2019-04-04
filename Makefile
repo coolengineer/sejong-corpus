@@ -6,6 +6,32 @@
 SHELL=/bin/bash
 M=4
 
+-include local.mk
+
+help:
+	@echo ''
+	@echo 'make all        : do all the jobs you need (downloading, converting(utf8) and paching)'
+	@echo ''
+	@echo 'make dic        : build dictionary from tagged corpus'
+	@echo 'make clean-all  : Delete all intermediate files and outputs'
+	@echo 'make clean      : Delete all but downloaded files'
+	@echo 'make clean-dic  : Delete dictionary files only'
+	@echo ''
+	@echo 'make diff       : Create patch files comparing original download files and corpus-utf8/*.txt files'
+	@echo ''
+	@echo 'Tip  1) You can customize with local.mk file'
+	@echo 'Tip  2) corpus/*           : Original corpus files (untouchable!)'
+	@echo 'Tip  3) corpus-utf8/*      : The converted files encoded with utf8 (You MAY fix misspelled POSes)'
+	@echo 'Tip  4) corpus-utf8.orig/* : The originals of corpus-utf8/* regenerated from corpus/* to make your patch files'
+	@echo 'Tip  5) patches/*          : The patch files to share your modifications, PLEASE send me a pull request for this'
+	@echo 'Tip  6) html/list.html     : Index file for downloading'
+	@echo 'Tip  7) html/article-*     : https://ithub.korean.go.kr/user/total/database/corpusManager.do'
+	@echo 'Tip  8) html/attachment-*  : Download http log of attachment files'
+	@echo 'Tip  9) html/cookie.txt    : Cookie jar for browsing'
+	@echo 'Tip 10) log/download.log   : Download log'
+	@echo 'Tip 11) log/list.idx       : Download candidates'
+	@echo ''
+
 all:
 	@time -p make stamps/corpus
 	@echo ""
@@ -84,7 +110,7 @@ clean-dic:
 	rm -rf dictionary stamps/dic logs/*.dic
 
 clean-all: clean
-	rm -rf corpus-utf8 corpus dictionary download html logs stamps/*
+	rm -rf corpus-* corpus dictionary download html logs stamps/*
 
 clean1:
 	rm -f logs/list.idx
@@ -99,8 +125,3 @@ clean5:
 clean6:
 	rm -f stamps/dic
 
-help:
-	@echo 'make all        : do all jobs'
-	@echo 'make clean-all  : Delete all intermediate files and outputs'
-	@echo 'make clean      : Delete all but downloaded files'
-	@echo 'make clean-dic  : Delete dictionary files only'
