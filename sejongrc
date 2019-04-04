@@ -22,11 +22,14 @@ curl_post() {
 		echo "${PREFIX}Skip download $DESC ($OUTFILE)"
 		return
 	fi
+    if test -z "$LOGFILE"; then
+        LOGFILE=/dev/null
+    fi
     if test -f "$OUTFILE"; then
         echo "${PREFIX}Download: Skip $DESC ($OUTFILE)"
     else
         echo "${PREFIX}Download: $DESC ($OUTFILE)"
-        curl -v --user-agent "$USERAGENT" --referer $REFERER --cookie $COOKIE --cookie-jar $COOKIE -o "$OUTFILE.tmp" -s "$URL" --data "$DATA"
+        curl --stderr "$LOGFILE" -v --user-agent "$USERAGENT" --referer $REFERER --cookie $COOKIE --cookie-jar $COOKIE -o "$OUTFILE.tmp" -s "$URL" --data "$DATA"
         mv "$OUTFILE.tmp" "$OUTFILE"
     fi
 }
