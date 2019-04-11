@@ -21,11 +21,19 @@ do
 	fi
 	./21.getcontent.sh $(($STEP * $PROCNUM + 1)) $STEP $_PROCNUM &
 	PIDS="$PIDS $!"
-	PROCNUM=$(($PROCNUM+1))
+	PROCNUM=$(( 10#$PROCNUM + 1))
 done
-trap 'kill 0; sleep 1; exit' SIGINT
-wait -n $PIDS || {
-	kill $PIDS
-	sleep 1
-   	exit 1
-}
+trap 'kill $PIDS; sleep 1; exit 1' SIGINT
+STATUS=0
+for pid in $PIDS
+do
+	wait $pid
+	_STATUS=$?
+	if test $_STATUS -ne 0; then
+		STATUS=$_STATUS
+		echo "Error occurred: $pid"
+	else
+		echo "Work done: $pid"
+	fi
+done
+exit $STATUS
